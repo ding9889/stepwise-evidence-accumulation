@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stepwise Evidence Accumulation</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #b5d0e8;
+      }
+      
+      #box {
+        width: 500px;
+        height: 500px;
+        background-color: #ccc;
+        margin-top: 50px;
+        margin-bottom: 50px;
+      }
+
+      #button-container {
+        justify-content: center;
+      }
+      
+      #ball-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
+        margin-right: 20px;
+        margin-bottom: 50px;
+      }
+
+      #dashboard {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 20px 20px 20px;
+        font-size: 1em;
+      }
+      
+      .ball {
+        width: 100px;
+        height: 100px;
+        margin: 0 50px;
+      }
+
+      .count {
+        font-size: 2em;
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-right: 20px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div>
+        <img id="box" src="./images/black box.jpg">
+    </div>
+    <div id="ball-container">
+        <img class="ball" src="./images/white ball.jpg" alt="white ball">
+        <span class="count" id="white-count">x 0</span>
+        <img class="ball" src="./images/red ball.jpg" alt="red ball">
+        <span class="count" id="red-count">x 0</span>
+    </div>
+    <div id="dashboard">
+        <span id="balance-label">Balance:</span>
+        <span id="balance">1000</span>
+      </div>
+    <div id="button-container">
+        <button class="button" id="draw-button" onclick="drawBall()">Draw</button>
+        <button class="button" id="guess-red-button" onclick="guessRed()">Red</button>
+        <button class="button" id="guess-white-button" onclick="guessWhite()">White</button>
+    </div>
+    <script>
+        // initialise the ball proportions randomly
+        var redBall = 0;
+        var whiteBall = 0;
+        var redBallCount = 0;
+        var whiteBallCount = 0;
+        var majorityBall = '';
+        var balance = 1000;
+        var trial = 0;
+        var drawHistory = {};
+        var tempHistory = [];
+
+        var initBox = function() {
+            // initialise the ball proportions randomly
+            redBall = Math.floor(Math.random() * 100);
+            // reshuffle the balls until the red ball count is not 50
+            while (redBall === 50) {
+                redBall = Math.floor(Math.random() * 100);
+            }
+            whiteBall = 100 - redBall;
+            // indicate the ball proportions
+            if (redBall > whiteBall) {
+                majorityBall = 'red';
+            } else {
+                majorityBall = 'white';
+            }
+            // reset the ball counts
+            redBallCount = 0;
+            whiteBallCount = 0;
+            trial++;
+        }
+
+        initBox();
+
+        // draw a ball from the box randomly and put it back
+        var drawBall = function() {
+            var ball = Math.floor(Math.random() * 100);
+            if (ball < redBall) {
+                var result = 'red';
+            } else {
+                var result = 'white';
+            }
+            // update the ball counts
+            if (result === 'red') {
+                redBallCount++;
+            } else {
+                whiteBallCount++;
+            }
+            // update the balance
+            balance -= 20;
+            // update the html elements
+            document.getElementById('red-count').innerHTML = 'x ' + redBallCount;
+            document.getElementById('white-count').innerHTML = 'x ' + whiteBallCount;
+            document.getElementById('balance').innerHTML = balance;
+            return result;
+        }
+
+        var guessRed = function() {
+            if (majorityBall === 'red') {
+                balance += 200;
+            }
+            // reset the box after the guess
+            initBox();
+            // update the html elements
+            document.getElementById('red-count').innerHTML = 'x ' + redBallCount;
+            document.getElementById('white-count').innerHTML = 'x ' + whiteBallCount;
+            document.getElementById('balance').innerHTML = balance;
+        }
+
+        var guessWhite = function() {
+            if (majorityBall === 'white') {
+                balance += 200;
+            }
+            // reset the box after the guess
+            initBox();
+            // update the html elements
+            document.getElementById('red-count').innerHTML = 'x ' + redBallCount;
+            document.getElementById('white-count').innerHTML = 'x ' + whiteBallCount;
+            document.getElementById('balance').innerHTML = balance;
+        }
+    </script>
+  </body>
+</html>
